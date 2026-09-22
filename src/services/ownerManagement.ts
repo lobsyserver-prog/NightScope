@@ -1,4 +1,5 @@
 import { randomInt } from 'node:crypto';
+import { JsonFileStore } from './persistence';
 
 export const OWNER_MENU_OPTIONS = [
   'Dynamic Pricing',
@@ -74,11 +75,28 @@ export class OwnerManagementService {
   private readonly cleaningTasks: CleaningTask[] = [];
   private readonly reviews: ReviewRecord[] = [];
   private readonly analytics: BookingAnalytics[] = [];
+  private readonly analyticsStore: JsonFileStore<BookingAnalytics[]>;
+  private analyticsPersistence: Promise<void> = Promise.resolve();
+  private analyticsInitialized = false;
   private readonly promoCodes = new Map<string, number>();
   private readonly properties = new Map<string, OwnerProperty>();
   private addOnSequence = 0;
   private taskSequence = 0;
   private reviewSequence = 0;
+
+  constructor(analyticsStore = new JsonFileStore<BookingAnalytics[]>(process.env.SCOPEBRIDGE_REPORTING_FILE ?? './data/reporting.json')) {
+    this.analyticsStore = analyticsStore;
+  }
+
+  async initialize(): Promise<void> {
+    if (this.analyticsInitialized) return;
+    this.analytics.push(...await this.analyticsStore.load([]));
+    this.analyticsInitialized = true;
+  }
+
+  async flush(): Promise<void> {
+    await this.analyticsPersistence;
+  }
 
   getOwnerMenu(): readonly string[] {
     return OWNER_MENU_OPTIONS;
@@ -171,6 +189,10 @@ export class OwnerManagementService {
 
   recordBookingAnalytics(record: BookingAnalytics): void {
     this.analytics.push({ ...record });
+    if (this.analyticsInitialized) {
+      this.analyticsPersistence = this.analyticsPersistence.then(() => this.analyticsStore.save([...this.analytics]));
+      void this.analyticsPersistence.catch((error: unknown) => console.error('Failed to persist reporting data:', error));
+    }
   }
 
   getAnalytics(propertyId?: string): { revenueMinor: number; occupancyPercent: number; bestPlatform: string | null } {

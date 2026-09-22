@@ -14,9 +14,9 @@ export class BookingChannelsService {
         id: channel.platform,
         platform: channel.platform,
         name: channel.name,
-        isActive: channel.isActive,
-        apiKey: '',
-        accountId: '',
+        isActive: channel.platform === 'direct' || this.hasCredentials(channel.platform),
+        apiKey: process.env[this.apiKeyVariable(channel.platform)] ?? '',
+        accountId: process.env[this.accountIdVariable(channel.platform)] ?? '',
         lastSyncedAt: null,
         syncStatus: 'idle',
       };
@@ -630,6 +630,21 @@ export class BookingChannelsService {
    */
   getChannelByPlatform(platform: string): BookingChannel | undefined {
     return Array.from(this.channels.values()).find(c => c.platform === platform);
+  }
+
+  private hasCredentials(platform: string): boolean {
+    return Boolean(
+      process.env[this.apiKeyVariable(platform)] &&
+      process.env[this.accountIdVariable(platform)]
+    );
+  }
+
+  private apiKeyVariable(platform: string): string {
+    return `SCOPEBRIDGE_${platform.toUpperCase().replace(/[^A-Z0-9]/g, '_')}_API_KEY`;
+  }
+
+  private accountIdVariable(platform: string): string {
+    return `SCOPEBRIDGE_${platform.toUpperCase().replace(/[^A-Z0-9]/g, '_')}_ACCOUNT_ID`;
   }
 }
 

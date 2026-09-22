@@ -20,10 +20,10 @@ npm run build
 npm run dev
 ```
 
-The current `dev` command is a service smoke preview and exits after initializing the direct booking channel. External channel, payment, Google Places, email, and WhatsApp operations require their provider credentials and an HTTP/API layer.
+The application now starts an HTTP server on `PORT` (default `3000`). `GET /healthz` is the liveness check. `GET /readyz` and `GET /api/production-status` report whether at least one external channel and one card gateway are configured. External channel and payment operations still require their provider credentials. Providers are inactive until credentials are supplied; this project does not claim a provider is live merely because it is listed.
 
 ## Configuration
 
-Copy `.env.example` to `.env` and configure provider keys outside source control. Staff loan data defaults to `./data/staff-loans.json`; set `SCOPEBRIDGE_LOANS_FILE` to choose another location.
+Copy `.env.example` to `.env` and configure provider keys outside source control. Never commit live keys. Reporting analytics persist to `./data/reporting.json`; set `SCOPEBRIDGE_REPORTING_FILE` to choose another location. Staff loan data defaults to `./data/staff-loans.json`; set `SCOPEBRIDGE_LOANS_FILE` to choose another location.
 
 See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for production configuration and provider requirements.

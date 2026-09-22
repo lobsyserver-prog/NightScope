@@ -21,7 +21,7 @@ describe('BookingChannelsService', () => {
     expect(service.getChannelByPlatform('direct')?.isActive).toBe(true);
   });
 
-  it('registers all supported channels as active', () => {
+  it('does not activate channels without production credentials', () => {
     const service = new BookingChannelsService();
     const channels = service.getSupportedChannels();
 
@@ -36,23 +36,17 @@ describe('BookingChannelsService', () => {
       'tripadvisor',
       'direct',
     ]);
-    expect(channels.every(c => c.isActive)).toBe(true);
+    expect(channels.filter(c => c.isActive).map(c => c.platform)).toEqual(['direct']);
   });
 });
 
 describe('PaymentGatewayService', () => {
-  it('exposes all payment gateways as active', () => {
+  it('only exposes configured payment gateways as active', () => {
     const service = new PaymentGatewayService();
     const gateways = service.getActiveGateways();
 
-    expect(gateways.map(g => g.name)).toEqual([
-      'Stripe',
-      'Yoco',
-      'PayFast',
-      'Ozow',
-      'Paystack',
-      'Pay at property',
-    ]);
+    expect(gateways.map(g => g.name)).toEqual(['Pay at property']);
     expect(gateways.every(g => g.isActive)).toBe(true);
+    expect(gateways.every(g => g.environment === 'live')).toBe(true);
   });
 });

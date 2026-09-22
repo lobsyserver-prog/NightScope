@@ -33,7 +33,7 @@ describe('GuestExperienceService', () => {
   it('exposes easy payment, itinerary, and loyalty tools', () => {
     const service = new GuestExperienceService();
 
-    expect(service.getPaymentOptions()).toEqual(['Stripe', 'Yoco', 'PayFast', 'Ozow', 'Paystack', 'Pay at property']);
+    expect(service.getPaymentOptions()).toEqual(['Pay at property']);
     expect(service.buildItinerary({ checkInInstructions: 'Use the lockbox', directionsUrl: 'https://maps.google.com', localTips: ['Ferndale restaurants', 'Nearest Spar'] }).localTips).toHaveLength(2);
     expect(service.getRepeatGuestDiscountPercent('guest-1')).toBe(0);
     service.recordCompletedBooking('guest-1');

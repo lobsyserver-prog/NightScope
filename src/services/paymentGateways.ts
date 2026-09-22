@@ -14,11 +14,11 @@ export class PaymentGatewayService {
 
   constructor() {
     const configList: PaymentGatewayConfig[] = [
-      { id: 'stripe', name: 'Stripe', isActive: true, apiKey: 'sk_test_placeholder', environment: 'sandbox', currency: 'ZAR' },
-      { id: 'yoco', name: 'Yoco', isActive: true, apiKey: 'yoco_test_placeholder', environment: 'sandbox', currency: 'ZAR' },
-      { id: 'payfast', name: 'PayFast', isActive: true, apiKey: 'payfast_test_placeholder', environment: 'sandbox', currency: 'ZAR' },
-      { id: 'ozow', name: 'Ozow', isActive: true, apiKey: 'ozow_test_placeholder', environment: 'sandbox', currency: 'ZAR' },
-      { id: 'paystack', name: 'Paystack', isActive: true, apiKey: 'paystack_test_placeholder', environment: 'sandbox', currency: 'ZAR' },
+      this.fromEnvironment('stripe', 'Stripe', 'STRIPE_SECRET_KEY'),
+      this.fromEnvironment('yoco', 'Yoco', 'YOCO_SECRET_KEY'),
+      this.fromEnvironment('payfast', 'PayFast', 'PAYFAST_SECRET_KEY'),
+      this.fromEnvironment('ozow', 'Ozow', 'OZOW_API_KEY'),
+      this.fromEnvironment('paystack', 'Paystack', 'PAYSTACK_SECRET_KEY'),
       { id: 'pay-at-property', name: 'Pay at property', isActive: true, apiKey: '', environment: 'live', currency: 'ZAR' },
     ];
 
@@ -33,6 +33,23 @@ export class PaymentGatewayService {
 
   getGateway(name: PaymentGatewayName): PaymentGatewayConfig | undefined {
     return Array.from(this.gateways.values()).find(g => g.name === name);
+  }
+
+  private fromEnvironment(
+    id: string,
+    name: Exclude<PaymentGatewayName, 'Pay at property'>,
+    secretName: string
+  ): PaymentGatewayConfig {
+    const apiKey = process.env[secretName] ?? '';
+    const environment = process.env.NODE_ENV === 'production' ? 'live' : 'sandbox';
+    return {
+      id,
+      name,
+      isActive: apiKey.length > 0,
+      apiKey,
+      environment,
+      currency: process.env.PAYMENT_CURRENCY ?? 'ZAR',
+    };
   }
 }
 

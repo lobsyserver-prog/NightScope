@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { OwnerManagementService } from '../services/ownerManagement';
+import { JsonFileStore } from '../services/persistence';
 
 describe('OwnerManagementService', () => {
   it('provides owner menu and dynamic pricing', () => {
@@ -40,5 +44,23 @@ describe('OwnerManagementService', () => {
     service.createPromoCode('FERNDALE10', 10);
     expect(service.getPromoDiscount('ferndale10')).toBe(10);
     expect(service.addProperty({ id: 'property-1', ownerId: 'owner-1', name: 'Villa', address: '117 Oxford' })).toHaveLength(1);
+  });
+
+  it('persists reporting analytics across service instances', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'nightscope-reporting-'));
+    const filePath = join(directory, 'reporting.json');
+
+    try {
+      const firstService = new OwnerManagementService(new JsonFileStore(filePath));
+      await firstService.initialize();
+      firstService.recordBookingAnalytics({ propertyId: 'property-1', month: '2026-09', platform: 'direct', revenueMinor: 250000, nights: 12 });
+      await firstService.flush();
+
+      const secondService = new OwnerManagementService(new JsonFileStore(filePath));
+      await secondService.initialize();
+      expect(secondService.getAnalytics('property-1')).toMatchObject({ revenueMinor: 250000, bestPlatform: 'direct' });
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
   });
 });
