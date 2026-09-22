@@ -1,16 +1,20 @@
-# NightScope Production Deployment Guide
+# ScopeBridge Production Deployment Guide
 
 ## ✅ Business Functions Verification Checklist
 
+### Property Maintenance Provider
+- Owner-selectable maintenance partner: [BuildSkills](https://builtskillsa.netlify.app)
+- Services: building, property maintenance, refurbishment, painting, repairs, and renovations
+
 ### 1. **Authentication System**
 - ✅ Admin Credentials
-  - **Username**: `ScopeAdmin`
-  - **Password**: `Admin@Scope12345`
+  - **Username**: `<configure-in-your-secret-manager>`
+  - **Password**: `<configure-in-your-secret-manager>`
   - **Role**: Full administrative access
 
 - ✅ Owner Account (Kenneth Mathunywa)
-  - **User ID / Email**: `8001015009087` or `katlego.mathunywa@mdlulibriges.co.za`
-  - **Password**: `Kenneth@Scope12345`
+  - **User ID / Email**: `<configure-in-your-secret-manager>`
+  - **Password**: `<configure-in-your-secret-manager>`
   - **Role**: Property owner dashboard & yield management
 
 ### 2. **Revenue Management**
@@ -113,14 +117,9 @@ SERVER_HOST=0.0.0.0
 # Install dependencies
 npm install
 
-# Run type checking
-npm run lint
-
-# Build frontend
+# Run tests and type checking
+npm test
 npm run build
-
-# Build server
-npm run build:server
 
 # Start production server
 npm run start
@@ -195,25 +194,25 @@ Returns current server-persisted state + last modified timestamp.
 ### Administrator Account
 | Field | Value |
 |-------|-------|
-| Username | `ScopeAdmin` |
-| Password | `Admin@Scope12345` |
+| Username | `<configure-in-your-secret-manager>` |
+| Password | `<configure-in-your-secret-manager>` |
 | Access | Full system admin, FICA audit, settings |
 | Email | admin@nightscope.co.za |
 
 ### Property Owner Account (Kenneth Mathunywa)
 | Field | Value |
 |-------|-------|
-| User ID | `8001015009087` |
-| Email | `katlego.mathunywa@mdlulibriges.co.za` |
-| Password | `Kenneth@Scope12345` |
+| User ID | `<configure-in-your-secret-manager>` |
+| Email | `<configure-in-your-secret-manager>` |
+| Password | `<configure-in-your-secret-manager>` |
 | Access | Dashboard, pricing, reservations, reporting |
 | Properties | All linked BnB units |
 
 ### Test Guest Account
 | Field | Value |
 |-------|-------|
-| Email | `guest@test.com` |
-| Password | `Guest@123456` |
+| Email | `<configure-in-your-secret-manager>` |
+| Password | `<configure-in-your-secret-manager>` |
 | Access | My Bookings, Price Hunter, Itinerary builder |
 
 ---

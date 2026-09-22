@@ -1,12 +1,29 @@
-import { BookingChannel, UnifiedBooking, ChannelSyncResponse, SyncError } from '../types';
+import { BookingChannel, UnifiedBooking, ChannelSyncResponse, SyncError, SUPPORTED_CHANNELS } from '../types';
 
 /**
- * NightScope Booking Channels Integration Service
+ * ScopeBridge Booking Channels Integration Service
  * Supports: Airbnb, Booking.com, Lekkeslaap, Expedia, VRBO, Trivago, TripAdvisor, Direct
  */
 
 export class BookingChannelsService {
   private channels: Map<string, BookingChannel> = new Map();
+
+  constructor() {
+    for (const channel of SUPPORTED_CHANNELS) {
+      const config: BookingChannel = {
+        id: channel.platform,
+        platform: channel.platform,
+        name: channel.name,
+        isActive: channel.isActive,
+        apiKey: '',
+        accountId: '',
+        lastSyncedAt: null,
+        syncStatus: 'idle',
+      };
+
+      this.channels.set(config.id, config);
+    }
+  }
 
   /**
    * Initialize Booking Channel
@@ -589,6 +606,25 @@ export class BookingChannelsService {
     return Array.from(this.channels.values()).filter(c => c.isActive);
   }
 
+  getSupportedChannels(): BookingChannel[] {
+    return Array.from(this.channels.values()).sort((a, b) => this.channelOrder(a.platform) - this.channelOrder(b.platform));
+  }
+
+  private channelOrder(platform: string): number {
+    const order: Record<string, number> = {
+      airbnb: 0,
+      'booking.com': 1,
+      lekkeslaap: 2,
+      expedia: 3,
+      vrbo: 4,
+      trivago: 5,
+      tripadvisor: 6,
+      direct: 7,
+    };
+
+    return order[platform] ?? 999;
+  }
+
   /**
    * Get Channel by Platform
    */
@@ -597,4 +633,6 @@ export class BookingChannelsService {
   }
 }
 
-export default new BookingChannelsService();
+const bookingChannelsService = new BookingChannelsService();
+
+export default bookingChannelsService;
