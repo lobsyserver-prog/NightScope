@@ -3,17 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ScopeBridge Login</title>
+    <title>Night Scope | ScopeBridge</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="auth-shell">
+    <main class="landing-shell">
+      <header class="site-brand">
+        <div class="panda-family" aria-label="Night Scope panda family logo"><span>🐼</span><span>🐼</span><span>🐼</span><span>🐼</span></div>
+        <div class="brand-name"><strong>Night</strong> <span>Scope</span></div>
+        <div class="brand-subtitle">ScopeBridge hospitality platform</div>
+      </header>
+
+      <section class="hero-copy">
+        <p class="hero-kicker">Care &amp; Comfort for Every Guest, Power for Every Host</p>
+        <p>South Africa's premier hospitality and executive-stay platform</p>
+        <p>featuring real-time price-drop hunting and multi-channel yield engines.</p>
+      </section>
+
       <section class="auth-card">
         <div class="brand-row">
-          <div class="brand-mark" aria-label="Panda icon">🐼</div>
           <div>
             <p class="eyebrow">Production Access</p>
-            <h1>ScopeBridge</h1>
+            <h1>Welcome to Night Scope</h1>
           </div>
         </div>
 
@@ -24,15 +35,18 @@
           <label for="password">Password</label>
           <input id="password" name="password" type="password" required />
 
-          <button type="submit">Log in</button>
+          <button type="submit">Sign in to Night Scope <span aria-hidden="true">→</span></button>
         </form>
 
         <div class="auth-links">
-          <a href="./register.html">Create an account</a>
+          <a href="./register.html">Register an account <span aria-hidden="true">→</span></a>
         </div>
+
+        <p class="guest-link">Or explore public stays as a guest <span aria-hidden="true">→</span></p>
 
         <p id="message" class="message" aria-live="polite"></p>
       </section>
+      <footer class="site-footer"><strong>Night <span>Scope</span></strong> · Care &amp; Comfort for Every Guest, Power for Every Host<br /><small>ScopeBridge · South Africa · Smart booking and hospitality yield</small></footer>
     </main>
 
     <script src="./app.js"></script>
