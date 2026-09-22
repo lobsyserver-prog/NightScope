@@ -1,4 +1,8 @@
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { JsonFileStore } from '../services/persistence';
 import { UserAccountService } from '../services/userAccounts';
 
 describe('UserAccountService', () => {
@@ -44,5 +48,25 @@ describe('UserAccountService', () => {
     service.changePassword(created.userId, 'A-secure-password-1', 'Another-secure-password-2');
     expect(() => service.authenticate(created.userId, 'A-secure-password-1')).toThrow('Invalid user ID or password');
     expect(service.authenticate(created.userId, 'Another-secure-password-2').userId).toBe(created.userId);
+  });
+
+  it('persists production accounts and allows admin profile edits', () => {
+    const tempDir = mkdtempSync(join(tmpdir(), 'scopebridge-users-'));
+    try {
+      const service = new UserAccountService(new JsonFileStore(join(tempDir, 'users.json')));
+      const admin = service.register('admin', { fullName: 'System Admin', email: 'admin@scopebridge.app' }, 'Strong-Admin-Password-9');
+      const owner = service.register('owner', { fullName: 'Owner One', email: 'owner@example.com' }, 'Strong-Owner-Password-9');
+      const guest = service.register('guest', { fullName: 'Guest One', email: 'guest@example.com' }, 'Strong-Guest-Password-9');
+
+      service.updateProfile(admin.userId, owner.userId, { fullName: 'Owner One Updated' });
+      expect(service.getProfile(admin.userId, owner.userId).profile.fullName).toBe('Owner One Updated');
+      expect(service.authenticate(admin.userId, 'Strong-Admin-Password-9').role).toBe('admin');
+      expect(service.authenticate(guest.userId, 'Strong-Guest-Password-9').profile.email).toBe('guest@example.com');
+
+      const reloaded = new UserAccountService(new JsonFileStore(join(tempDir, 'users.json')));
+      expect(reloaded.authenticate(owner.userId, 'Strong-Owner-Password-9').profile.fullName).toBe('Owner One');
+    } finally {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
   });
 });

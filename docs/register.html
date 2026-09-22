@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ScopeBridge Registration</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="auth-shell">
+      <section class="auth-card">
+        <div class="brand-row">
+          <div class="brand-mark" aria-label="Panda icon">🐼</div>
+          <div>
+            <p class="eyebrow">New Profile</p>
+            <h1>Create your account</h1>
+          </div>
+        </div>
+
+        <form id="registrationForm" novalidate>
+          <label for="fullName">Full name</label>
+          <input id="fullName" name="fullName" type="text" autocomplete="name" required />
+
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" autocomplete="email" required />
+
+          <label for="phone">Phone number</label>
+          <input id="phone" name="phone" type="tel" autocomplete="tel" />
+
+          <label for="address">Address</label>
+          <input id="address" name="address" type="text" autocomplete="street-address" />
+
+          <fieldset>
+            <legend>Profile type</legend>
+            <label class="choice"><input type="radio" name="role" value="guest" checked /> Guest</label>
+            <label class="choice"><input type="radio" name="role" value="owner" /> Property owner</label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Monthly plan</legend>
+            <label class="plan-choice"><input type="radio" name="plan" value="guest-free" data-fee="0" checked /> Guest access <strong>Free</strong></label>
+            <label class="plan-choice"><input type="radio" name="plan" value="owner-standard" data-fee="499" /> Owner Standard <strong>R499 / month</strong></label>
+            <label class="plan-choice"><input type="radio" name="plan" value="owner-plus" data-fee="999" /> Owner Plus <strong>R999 / month</strong></label>
+          </fieldset>
+
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" minlength="12" autocomplete="new-password" required />
+          <p class="field-note">Use at least 12 characters.</p>
+
+          <button type="submit">Register profile</button>
+        </form>
+
+        <div class="auth-links"><a href="./index.html">Already registered? Log in</a></div>
+        <p id="message" class="message" aria-live="polite"></p>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>

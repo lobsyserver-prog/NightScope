@@ -1,4 +1,8 @@
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { JsonFileStore } from '../services/persistence';
 import { OwnerBillingService } from '../services/ownerBilling';
 
 describe('OwnerBillingService', () => {
@@ -31,5 +35,21 @@ describe('OwnerBillingService', () => {
     const quote = service.createQuote('owner-1', 'Guest', [{ description: 'Stay', quantity: 1, unitPriceMinor: 1000 }]);
     expect(() => service.printQuote('other-owner', quote.id)).toThrow('Only the quote owner');
     expect(() => service.createInvoiceFromQuote('owner-1', quote.id)).toThrow('accepted quote');
+  });
+
+  it('saves quote and invoice PDFs to disk and exposes valid PDF content', () => {
+    const tempDir = mkdtempSync(join(tmpdir(), 'scopebridge-billing-'));
+    try {
+      const filePath = join(tempDir, 'billing.json');
+      const service = new OwnerBillingService(new JsonFileStore(filePath));
+      const quote = service.createQuote('owner-1', 'Guest One', [{ description: 'Stay', quantity: 1, unitPriceMinor: 200000 }], 'zar', 15);
+      const quotePdf = service.saveQuotePdf('owner-1', quote.id, join(tempDir, 'quote.pdf'));
+      expect(quotePdf).toContain('%PDF');
+      const invoice = service.createInvoice('owner-1', 'Guest One', [{ description: 'Stay', quantity: 1, unitPriceMinor: 200000 }], 'zar', 15);
+      const invoicePdf = service.saveInvoicePdf('owner-1', invoice.id, join(tempDir, 'invoice.pdf'));
+      expect(invoicePdf).toContain('%PDF');
+    } finally {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
   });
 });

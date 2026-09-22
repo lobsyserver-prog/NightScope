@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ScopeBridge Admin Dashboard</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <style>
+      body { display: block; padding: 32px; }
+      .dashboard { max-width: 1100px; margin: 0 auto; }
+      .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+      .pill { display: inline-block; padding: 8px 12px; border-radius: 999px; background: #16263d; color: #dfeafc; }
+      table { width: 100%; border-collapse: collapse; background: rgba(17,29,45,0.96); border: 1px solid #2e466d; border-radius: 12px; overflow: hidden; }
+      th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid #2e466d; }
+      th { background: #172b42; }
+      .muted { color: #afc2de; }
+    </style>
+  </head>
+  <body>
+    <main class="dashboard">
+      <div class="toolbar">
+        <div>
+          <p class="eyebrow">Admin</p>
+          <h1>ScopeBridge Dashboard</h1>
+        </div>
+        <a href="./index.html" class="pill">Log out</a>
+      </div>
+
+      <p class="muted">Production users and access roles</p>
+      <table>
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Role</th>
+            <th>Full name</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody id="userTableBody"><tr><td colspan="4" class="muted">Connect this frontend to the deployed ScopeBridge API to load users.</td></tr></tbody>
+      </table>
+    </main>
+
+    <script src="./app.js"></script>
+    <script>
+    </script>
+  </body>
+</html>

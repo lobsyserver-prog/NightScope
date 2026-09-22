@@ -1,8 +1,25 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 export class JsonFileStore<T> {
   constructor(private readonly filePath: string) {}
+
+  loadSync(fallback: T): T {
+    try {
+      return JSON.parse(readFileSync(this.filePath, 'utf8')) as T;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') return fallback;
+      throw error;
+    }
+  }
+
+  saveSync(value: T): void {
+    mkdirSync(dirname(this.filePath), { recursive: true });
+    const temporaryPath = join(dirname(this.filePath), `.${Date.now()}-${process.pid}.tmp`);
+    writeFileSync(temporaryPath, JSON.stringify(value, null, 2), 'utf8');
+    renameSync(temporaryPath, this.filePath);
+  }
 
   async load(fallback: T): Promise<T> {
     try {
